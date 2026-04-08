@@ -79,24 +79,40 @@
         .ctrl-btn:active { background: var(--accent); color: #000; transform: translateY(2px); }
         .ctrl-drop { width: 80px; border-radius: 15px; } /* Botón de caída rápida diferente */
 
-        /* RESPONSIVO PARA MÓVILES MEJORADO */
+        /* =======================================================
+           RESPONSIVO PARA MÓVILES (OPTIMIZACIÓN VERTICAL EXTREMA) 
+           ======================================================= */
         @media (max-width: 600px) {
-            body { padding: 5px 0; }
-            .game-container { flex-direction: column; align-items: center; padding: 10px; border: none; gap: 10px; }
+            body { padding: 2px 0; } /* Padding mínimo del body */
+            .game-container { flex-direction: column; align-items: center; padding: 5px; border: none; gap: 3px; } /* Gaps mínimos */
             
-            /* Limitamos el tablero para que no empuje los botones hacia abajo */
-            canvas { width: 100%; max-width: 220px; height: auto; } 
+            /* Tablero reducido para ganar mucha altura vertical proporcional */
+            canvas#tetris { width: auto; max-width: 190px; height: auto; border: 1px solid #444; } 
             
-            .side-panel { width: 100%; flex-direction: row; flex-wrap: wrap; justify-content: space-around; gap: 5px; }
-            .stat-card { flex: 1; min-width: 45%; margin: 0; padding: 5px; }
-            .buttons-group { flex-direction: row; flex-wrap: wrap; width: 100%; justify-content: center; gap: 4px; }
-            .btn { flex: 1; min-width: 45%; font-size: 11px; padding: 6px 2px; }
+            .side-panel { width: 100%; flex-direction: column; gap: 2px; } /* Stackeado, sin gaps */
             
-            /* Hacemos los controles táctiles un poco más compactos */
-            .mobile-controls { margin-top: 5px; gap: 8px; }
-            .ctrl-row { gap: 10px; }
-            .ctrl-btn { width: 50px; height: 50px; font-size: 20px; }
-            .ctrl-drop { width: 70px; }
+            /* Fila superior de estadísticas ultra-compacta */
+            #stats-row-1 { display: flex; width: 100%; gap: 5px; justify-content: space-around; }
+            
+            .stat-card { flex: 1; padding: 3px; margin: 0; border-bottom: 2px solid var(--accent); }
+            .stat-label { font-size: 9px; margin: 0; }
+            .stat-value { font-size: 16px; margin: 0; }
+            
+            /* Siguiente pieza muy pequeña */
+            canvas#next-piece { max-width: 45px; height: auto; }
+            
+            /* !!! MEDIDA DRÁSTICA: Ocultar Top Players en móvil para ahorrar ~100px verticalmente !!! */
+            .rank-card { display: none !important; }
+            
+            /* Botones de función pequeños */
+            .buttons-group { flex-direction: row; flex-wrap: wrap; width: 100%; justify-content: center; gap: 3px; margin-top: 1px;}
+            .btn { flex: 1; min-width: 45%; font-size: 9px; padding: 4px 1px; }
+            
+            /* Controles táctiles compactos y subidos */
+            .mobile-controls { margin-top: 5px; gap: 4px; } /* Espacio reducido entre filas */
+            .ctrl-row { gap: 6px; } /* Espacio reducido entre botones */
+            .ctrl-btn { width: 45px; height: 45px; font-size: 18px; border: 1px solid var(--accent);} /* Botones más pequeños */
+            .ctrl-drop { width: 60px; font-size: 16px;} /* Ajuste botón central */
         }
     </style>
 </head>
@@ -120,28 +136,28 @@
         <button class="btn" onclick="resetGame()" style="padding: 10px 20px;">REINTENTAR</button>
     </div>
 
-    <div style="position: relative;">
+    <div style="position: relative; display: flex; justify-content: center;">
         <canvas id="tetris" width="240" height="400"></canvas>
         <div id="flash-layer"></div>
     </div>
 
     <div class="side-panel">
-        <div style="display: flex; gap: 10px; width: 100%;">
-            <div class="stat-card" style="flex:1;">
+        <div id="stats-row-1">
+            <div class="stat-card">
                 <div class="stat-label">SIGUIENTE</div>
-                <div style="display:flex; justify-content:center; padding-top:5px;">
+                <div style="display:flex; justify-content:center; padding-top:2px;">
                     <canvas id="next-piece" width="80" height="80"></canvas>
                 </div>
             </div>
-            <div class="stat-card" style="flex:1;">
+            <div class="stat-card">
                 <div class="stat-label">NIVEL</div>
                 <div id="level" class="stat-value" style="color:var(--accent)">1</div>
-                <div class="stat-label" style="margin-top:5px">PUNTOS</div>
+                <div class="stat-label" style="margin-top:2px">PUNTOS</div>
                 <div id="score" class="stat-value">0</div>
             </div>
         </div>
         
-        <div class="stat-card" style="background:#0a0a20; font-size:11px;">
+        <div class="stat-card rank-card" style="background:#0a0a20; font-size:11px;">
             <div style="color:var(--gold); margin-bottom:5px;">TOP PLAYERS</div>
             <div id="rank-list"></div>
         </div>
