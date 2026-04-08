@@ -9,7 +9,7 @@
         body { 
             background: var(--bg); color: #fff; font-family: 'Courier New', monospace; 
             display: flex; flex-direction: column; align-items: center; justify-content: center; 
-            min-height: 100vh; margin: 0; overflow: hidden; /* Evitamos el scroll */
+            min-height: 100vh; margin: 0; overflow: hidden; /* Evitamos el scroll radicalmente */
             padding: 10px 0; box-sizing: border-box;
             user-select: none; -webkit-user-select: none;
         }
@@ -63,42 +63,38 @@
         .ctrl-drop { width: 65px; height: 65px; border-radius: 15px; font-size: 28px; } 
 
         /* =======================================================
-           RESPONSIVO MÓVIL: MÁS PEQUEÑO Y SIN SCROLL
+           RESPONSIVO MÓVIL: COMPACTO, PIEZAS MÁS PEQUEÑAS
            ======================================================= */
         @media (max-width: 600px) {
-            /* Bloqueamos comportamientos nativos de scroll del navegador móvil */
             body { padding: 0; justify-content: flex-start; height: 100dvh; touch-action: none; } 
             
             .game-container { 
                 display: flex; flex-direction: column; align-items: center; justify-content: space-between; 
-                padding: 4px; border: none; gap: 0; height: 100%; width: 100%; border-radius: 0;
+                padding: 6px; border: none; gap: 0; height: 100%; width: 100%; border-radius: 0;
             }
             
             .layout-left, .layout-right { display: contents; } 
             
-            /* 1. ESTADÍSTICAS ARRIBA (Muy compactas) */
-            #stats-row-1 { order: 1; display: flex !important; flex-direction: row !important; width: 100%; justify-content: space-around; gap: 4px; margin-bottom: 2px; flex: 0 0 auto; }
-            .stat-card { flex: 1; padding: 2px; margin: 0; border-bottom: 2px solid var(--accent); }
-            .stat-label { font-size: 8px; margin: 0; }
-            .stat-value { font-size: 12px; margin: 0; }
-            canvas#next-piece { max-width: 30px; height: auto; }
+            #stats-row-1 { order: 1; display: flex !important; flex-direction: row !important; width: 100%; justify-content: space-around; gap: 5px; margin-bottom: 2px; flex: 0 0 auto; }
+            .stat-card { flex: 1; padding: 3px; margin: 0; border-bottom: 2px solid var(--accent); }
+            .stat-label { font-size: 9px; margin: 0; }
+            .stat-value { font-size: 14px; margin: 0; }
+            canvas#next-piece { max-width: 35px; height: auto; }
             
-            /* 2. PANTALLA EN EL MEDIO (Forzamos alto máximo al 45% de la pantalla) */
-            .canvas-wrapper { order: 2; flex: 1 1 auto; display: flex; align-items: center; justify-content: center; width: 100%; margin: 2px 0; min-height: 0; }
-            canvas#tetris { height: 100%; max-height: 45vh; width: auto; max-width: 100%; object-fit: contain; } 
+            /* Al ser el canvas más pequeño de base (180x300), se acomodará perfecto */
+            .canvas-wrapper { order: 2; flex: 1 1 auto; display: flex; align-items: center; justify-content: center; width: 100%; margin: 4px 0; min-height: 0; }
+            canvas#tetris { height: auto; max-height: 100%; width: auto; max-width: 100%; object-fit: contain; } 
             
-            /* 3. CONTROLES PULGARES JUSTO DEBAJO (Achicados) */
-            #mobile-controls { order: 3; display: flex; flex-direction: row; flex: 0 0 auto; width: 100%; padding: 0 5px; margin: 2px 0;}
-            .ctrl-pad-action { gap: 8px; }
-            .ctrl-pad-dir { gap: 4px; }
-            .ctrl-btn { width: 44px; height: 44px; font-size: 18px; }
-            .ctrl-drop { width: 50px; height: 50px; font-size: 20px; } 
-            #btn-up { margin-left: 15px; } 
+            #mobile-controls { order: 3; display: flex; flex-direction: row; flex: 0 0 auto; width: 100%; padding: 0 10px; margin: 4px 0;}
+            .ctrl-pad-action { gap: 10px; }
+            .ctrl-pad-dir { gap: 6px; }
+            .ctrl-btn { width: 48px; height: 48px; font-size: 20px; }
+            .ctrl-drop { width: 55px; height: 55px; font-size: 22px; } 
+            #btn-up { margin-left: 18px; } 
             
-            /* 4. BOTONES DEL SISTEMA AL FONDO (Muy compactos) */
             .rank-card { display: none !important; }
-            .buttons-group { order: 4; flex-direction: row; flex-wrap: wrap; width: 100%; justify-content: center; gap: 3px; margin: 2px 0 4px 0; flex: 0 0 auto; }
-            .btn { flex: 1; min-width: 45%; font-size: 9px; padding: 6px 2px; }
+            .buttons-group { order: 4; flex-direction: row; flex-wrap: wrap; width: 100%; justify-content: center; gap: 4px; margin: 2px 0 6px 0; flex: 0 0 auto; }
+            .btn { flex: 1; min-width: 45%; font-size: 10px; padding: 8px 2px; }
         }
     </style>
 </head>
@@ -124,7 +120,7 @@
 
     <div class="layout-left">
         <div class="canvas-wrapper" style="position: relative;">
-            <canvas id="tetris" width="240" height="400"></canvas>
+            <canvas id="tetris" width="180" height="300"></canvas>
             <div id="flash-layer"></div>
         </div>
         
@@ -147,7 +143,7 @@
             <div class="stat-card">
                 <div class="stat-label">SIGUIENTE</div>
                 <div style="display:flex; justify-content:center; padding-top:2px;">
-                    <canvas id="next-piece" width="80" height="80"></canvas>
+                    <canvas id="next-piece" width="60" height="60"></canvas>
                 </div>
             </div>
             <div class="stat-card">
@@ -224,7 +220,10 @@ const canvas = document.getElementById('tetris');
 const ctx = canvas.getContext('2d');
 const nCanvas = document.getElementById('next-piece');
 const nCtx = nCanvas.getContext('2d');
-ctx.scale(20, 20); nCtx.scale(20, 20);
+
+// ESCALA REDUCIDA: Ahora dibujamos los bloques a 15px en lugar de 20px
+ctx.scale(15, 15); 
+nCtx.scale(15, 15);
 
 const COLORS = [null, '#de000d', '#0057a8', '#fec400', '#009624', '#e76318', '#a0a5a9', '#f4f4f4'];
 
