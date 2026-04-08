@@ -79,14 +79,24 @@
         .ctrl-btn:active { background: var(--accent); color: #000; transform: translateY(2px); }
         .ctrl-drop { width: 80px; border-radius: 15px; } /* Botón de caída rápida diferente */
 
-        /* RESPONSIVO PARA MÓVILES */
+        /* RESPONSIVO PARA MÓVILES MEJORADO */
         @media (max-width: 600px) {
-            .game-container { flex-direction: column; align-items: center; padding: 10px; border: none; }
-            .side-panel { width: 100%; flex-direction: row; flex-wrap: wrap; justify-content: space-around; }
-            .stat-card { flex: 1; min-width: 45%; margin: 4px; }
-            .buttons-group { flex-direction: row; flex-wrap: wrap; width: 100%; justify-content: center; }
-            .btn { flex: 1; min-width: 40%; font-size: 10px; }
-            canvas { width: 100%; max-width: 240px; height: auto; } /* Mantiene la proporción */
+            body { padding: 5px 0; }
+            .game-container { flex-direction: column; align-items: center; padding: 10px; border: none; gap: 10px; }
+            
+            /* Limitamos el tablero para que no empuje los botones hacia abajo */
+            canvas { width: 100%; max-width: 220px; height: auto; } 
+            
+            .side-panel { width: 100%; flex-direction: row; flex-wrap: wrap; justify-content: space-around; gap: 5px; }
+            .stat-card { flex: 1; min-width: 45%; margin: 0; padding: 5px; }
+            .buttons-group { flex-direction: row; flex-wrap: wrap; width: 100%; justify-content: center; gap: 4px; }
+            .btn { flex: 1; min-width: 45%; font-size: 11px; padding: 6px 2px; }
+            
+            /* Hacemos los controles táctiles un poco más compactos */
+            .mobile-controls { margin-top: 5px; gap: 8px; }
+            .ctrl-row { gap: 10px; }
+            .ctrl-btn { width: 50px; height: 50px; font-size: 20px; }
+            .ctrl-drop { width: 70px; }
         }
     </style>
 </head>
