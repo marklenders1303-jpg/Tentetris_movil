@@ -9,44 +9,32 @@
         body { 
             background: var(--bg); color: #fff; font-family: 'Courier New', monospace; 
             display: flex; flex-direction: column; align-items: center; justify-content: center; 
-            min-height: 100vh; margin: 0; 
-            overflow-y: auto; 
-            padding: 10px 0;
-            box-sizing: border-box;
-            /* Evita la selección de texto al jugar en móvil */
-            user-select: none; 
-            -webkit-user-select: none;
+            min-height: 100vh; margin: 0; overflow-y: auto; padding: 10px 0; box-sizing: border-box;
+            user-select: none; -webkit-user-select: none;
         }
         .game-container { 
             display: flex; gap: 15px; padding: 15px; background: #000; 
-            border: 2px solid #333; border-radius: 15px; position: relative; 
-            max-width: 100%; box-sizing: border-box;
+            border: 2px solid #333; border-radius: 15px; position: relative; max-width: 100%; box-sizing: border-box;
         }
         canvas { border: 2px solid #444; background: #000; display: block; max-width: 100%; height: auto; }
-        .side-panel { 
-            display: flex; flex-direction: column; gap: 8px; width: 180px; 
-            justify-content: space-between; 
-        }
-        .stat-card { 
-            background: var(--panel); padding: 8px; border-radius: 8px; 
-            text-align: center; border-bottom: 3px solid var(--accent); 
-        }
+        
+        .layout-left { display: flex; flex-direction: column; align-items: center; gap: 10px; }
+        .layout-right { display: flex; flex-direction: column; gap: 8px; width: 180px; justify-content: space-between; }
+        
+        .stat-card { background: var(--panel); padding: 8px; border-radius: 8px; text-align: center; border-bottom: 3px solid var(--accent); }
         .stat-label { font-size: 11px; color: var(--accent); letter-spacing: 1px; }
         .stat-value { font-size: 20px; font-weight: bold; }
         .buttons-group { display: flex; flex-direction: column; gap: 6px; margin-top: 5px; }
         .btn { 
-            padding: 8px 5px; cursor: pointer; background: #1a1a2e; 
-            color: var(--accent); border: 1px solid var(--accent); 
-            font-weight: bold; font-family: inherit; border-radius: 5px; 
+            padding: 8px 5px; cursor: pointer; background: #1a1a2e; color: var(--accent); 
+            border: 1px solid var(--accent); font-weight: bold; font-family: inherit; border-radius: 5px; 
             font-size: 12px; touch-action: manipulation;
         }
         .btn:hover { background: var(--accent); color: #000; }
         
-        /* OVERLAYS */
         .overlay { 
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
-            background: rgba(0,0,0,0.95); display: none; flex-direction: column; 
-            align-items: center; justify-content: center; z-index: 100; 
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); 
+            display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 100; 
             text-align: center; border-radius: 15px; 
         }
         #splash-overlay { display: flex; justify-content: center; align-items: center; flex-direction: column; color: #fff; padding: 20px;}
@@ -59,60 +47,47 @@
         .flash-active { animation: flash 0.3s ease-out; }
         @keyframes flash { 0% { background: transparent; } 50% { background: rgba(255,255,255,0.4); } 100% { background: transparent; } }
 
-        /* CONTROLES TÁCTILES */
-        .mobile-controls {
-            display: none; /* Oculto por defecto, se activa con JS si es táctil */
-            flex-direction: column;
-            gap: 10px;
-            margin-top: 15px;
-            width: 100%;
-        }
+        .mobile-controls { display: none; flex-direction: column; gap: 10px; margin-top: 5px; width: 100%; }
         .ctrl-row { display: flex; justify-content: center; gap: 15px; }
         .ctrl-btn {
-            background: var(--panel); border: 2px solid var(--accent);
-            color: var(--accent); width: 60px; height: 60px; border-radius: 50%;
-            font-size: 24px; font-weight: bold; cursor: pointer;
-            display: flex; align-items: center; justify-content: center;
-            touch-action: manipulation; /* Evita delays táctiles */
-            box-shadow: 0 4px 6px rgba(0,0,0,0.5);
+            background: var(--panel); border: 2px solid var(--accent); color: var(--accent); width: 60px; height: 60px; 
+            border-radius: 50%; font-size: 24px; font-weight: bold; cursor: pointer; display: flex; align-items: center; 
+            justify-content: center; touch-action: manipulation; box-shadow: 0 4px 6px rgba(0,0,0,0.5);
         }
         .ctrl-btn:active { background: var(--accent); color: #000; transform: translateY(2px); }
-        .ctrl-drop { width: 80px; border-radius: 15px; } /* Botón de caída rápida diferente */
+        .ctrl-drop { width: 80px; border-radius: 15px; } 
 
         /* =======================================================
-           RESPONSIVO PARA MÓVILES (OPTIMIZACIÓN VERTICAL EXTREMA) 
+           RESPONSIVO MÓVIL: ESTRUCTURA VERTICAL PERFECTA
            ======================================================= */
         @media (max-width: 600px) {
-            body { padding: 2px 0; } /* Padding mínimo del body */
-            .game-container { flex-direction: column; align-items: center; padding: 5px; border: none; gap: 3px; } /* Gaps mínimos */
+            body { padding: 2px 0; }
+            .game-container { display: flex; flex-direction: column; align-items: center; padding: 5px; border: none; gap: 0; }
             
-            /* Tablero reducido para ganar mucha altura vertical proporcional */
+            /* 'Desempaquetamos' las columnas para poder reordenar los bloques libremente */
+            .layout-left, .layout-right { display: contents; } 
+            
+            /* 1. ESTADÍSTICAS ARRIBA DEL TODO */
+            #stats-row-1 { order: 1; display: flex !important; flex-direction: row !important; width: 100%; justify-content: space-around; gap: 5px; margin-bottom: 5px; }
+            .stat-card { flex: 1; padding: 2px; margin: 0; border-bottom: 2px solid var(--accent); }
+            .stat-label { font-size: 9px; margin: 0; }
+            .stat-value { font-size: 14px; margin: 0; }
+            canvas#next-piece { max-width: 40px; height: auto; }
+            
+            /* 2. PANTALLA EN EL MEDIO */
+            .canvas-wrapper { order: 2; margin: 0 auto; }
             canvas#tetris { width: auto; max-width: 190px; height: auto; border: 1px solid #444; } 
             
-            .side-panel { width: 100%; flex-direction: column; gap: 2px; } /* Stackeado, sin gaps */
+            /* 3. CONTROLES JUSTO DEBAJO */
+            #mobile-controls { order: 3; display: flex; margin-top: 5px; gap: 4px; }
+            .ctrl-row { gap: 6px; } 
+            .ctrl-btn { width: 45px; height: 45px; font-size: 18px; border: 1px solid var(--accent); } 
+            .ctrl-drop { width: 60px; font-size: 16px; } 
             
-            /* Fila superior de estadísticas ultra-compacta */
-            #stats-row-1 { display: flex; width: 100%; gap: 5px; justify-content: space-around; }
-            
-            .stat-card { flex: 1; padding: 3px; margin: 0; border-bottom: 2px solid var(--accent); }
-            .stat-label { font-size: 9px; margin: 0; }
-            .stat-value { font-size: 16px; margin: 0; }
-            
-            /* Siguiente pieza muy pequeña */
-            canvas#next-piece { max-width: 45px; height: auto; }
-            
-            /* !!! MEDIDA DRÁSTICA: Ocultar Top Players en móvil para ahorrar ~100px verticalmente !!! */
-            .rank-card { display: none !important; }
-            
-            /* Botones de función pequeños */
-            .buttons-group { flex-direction: row; flex-wrap: wrap; width: 100%; justify-content: center; gap: 3px; margin-top: 1px;}
-            .btn { flex: 1; min-width: 45%; font-size: 9px; padding: 4px 1px; }
-            
-            /* Controles táctiles compactos y subidos */
-            .mobile-controls { margin-top: 5px; gap: 4px; } /* Espacio reducido entre filas */
-            .ctrl-row { gap: 6px; } /* Espacio reducido entre botones */
-            .ctrl-btn { width: 45px; height: 45px; font-size: 18px; border: 1px solid var(--accent);} /* Botones más pequeños */
-            .ctrl-drop { width: 60px; font-size: 16px;} /* Ajuste botón central */
+            /* 4. BOTONES Y OTROS ELEMENTOS AL FONDO */
+            .rank-card { display: none !important; } /* Ocultamos el top players en móvil */
+            .buttons-group { order: 4; flex-direction: row; flex-wrap: wrap; width: 100%; justify-content: center; gap: 3px; margin-top: 8px;}
+            .btn { flex: 1; min-width: 45%; font-size: 10px; padding: 6px 2px; }
         }
     </style>
 </head>
@@ -136,13 +111,29 @@
         <button class="btn" onclick="resetGame()" style="padding: 10px 20px;">REINTENTAR</button>
     </div>
 
-    <div style="position: relative; display: flex; justify-content: center;">
-        <canvas id="tetris" width="240" height="400"></canvas>
-        <div id="flash-layer"></div>
+    <div class="layout-left">
+        <div class="canvas-wrapper" style="position: relative;">
+            <canvas id="tetris" width="240" height="400"></canvas>
+            <div id="flash-layer"></div>
+        </div>
+        
+        <div id="mobile-controls" class="mobile-controls">
+            <div class="ctrl-row">
+                <div class="ctrl-btn" id="btn-up">↻</div>
+            </div>
+            <div class="ctrl-row">
+                <div class="ctrl-btn" id="btn-left">←</div>
+                <div class="ctrl-btn ctrl-drop" id="btn-drop">⏬</div>
+                <div class="ctrl-btn" id="btn-right">→</div>
+            </div>
+            <div class="ctrl-row">
+                <div class="ctrl-btn" id="btn-down">↓</div>
+            </div>
+        </div>
     </div>
 
-    <div class="side-panel">
-        <div id="stats-row-1">
+    <div class="layout-right">
+        <div id="stats-row-1" style="display: flex; flex-direction: column; gap: 8px;">
             <div class="stat-card">
                 <div class="stat-label">SIGUIENTE</div>
                 <div style="display:flex; justify-content:center; padding-top:2px;">
@@ -169,26 +160,12 @@
             <button class="btn" id="quit-btn" style="color:#ff0055; border-color:#ff0055;">🚪 SALIR</button>
         </div>
     </div>
-    
-    <div id="mobile-controls" class="mobile-controls">
-        <div class="ctrl-row">
-            <div class="ctrl-btn" id="btn-up">↻</div>
-        </div>
-        <div class="ctrl-row">
-            <div class="ctrl-btn" id="btn-left">←</div>
-            <div class="ctrl-btn ctrl-drop" id="btn-drop">⏬</div>
-            <div class="ctrl-btn" id="btn-right">→</div>
-        </div>
-        <div class="ctrl-row">
-            <div class="ctrl-btn" id="btn-down">↓</div>
-        </div>
-    </div>
 </div>
 
 <script>
 // --- MOTOR DE AUDIO ---
 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-let audioEnabled = false, melodyTimer, noteIdx = 0, isGameOver = false;
+let audioEnabled = false, melodyTimer = null, noteIdx = 0, isGameOver = false;
 let isStarted = false; 
 let paused = true; 
 
@@ -217,7 +194,14 @@ function playTone(freq, type, duration, vol=0.05, startTimeOffset=0) {
 }
 
 function playLoop() {
-    if(!audioEnabled || paused || isGameOver) { melodyTimer = setTimeout(playLoop, 500); return; }
+    // FIX: Destruimos el temporizador anterior antes de crear uno nuevo para que nunca se solapen
+    if (melodyTimer) { clearTimeout(melodyTimer); } 
+    
+    if(!audioEnabled || paused || isGameOver) { 
+        melodyTimer = setTimeout(playLoop, 500); 
+        return; 
+    }
+    
     const n = theme[noteIdx];
     let baseTempo = Math.max(100, 160 - (player.level * 4)); 
     let durationMs = n[1] * baseTempo;
@@ -363,7 +347,6 @@ function startGame() {
         isStarted = true; paused = false;
         document.getElementById('splash-overlay').style.display = 'none';
         
-        // El audio en navegadores requiere interacción previa del usuario
         audioEnabled = true;
         document.getElementById('music-toggle').innerText = "🔊 AUDIO: ON";
         if (audioCtx.state === 'suspended') audioCtx.resume(); 
@@ -379,10 +362,13 @@ document.getElementById('splash-prompt').addEventListener('touchstart', (e) => {
 
 document.getElementById('music-toggle').onclick = (e) => {
     audioEnabled = !audioEnabled; e.target.innerText = audioEnabled ? "🔊 AUDIO: ON" : "🔊 AUDIO: OFF";
-    if(audioEnabled) { if (audioCtx.state === 'suspended') { audioCtx.resume(); } playLoop(); }
+    if(audioEnabled) { 
+        if (audioCtx.state === 'suspended') { audioCtx.resume(); } 
+        playLoop(); 
+    }
 };
 
-// --- CONTROLES MODULARIZADOS (Para usarlos en teclado y táctil) ---
+// --- CONTROLES MODULARIZADOS ---
 function actionLeft() { player.pos.x--; if(collide(arena, player)) player.pos.x++; else playTone(300, 'square', 0.1, 0.05); }
 function actionRight() { player.pos.x++; if(collide(arena, player)) player.pos.x--; else playTone(300, 'square', 0.1, 0.05); }
 function actionDown() { playerDrop(); playTone(200, 'triangle', 0.1, 0.05); }
@@ -409,7 +395,6 @@ document.addEventListener('keydown', e => {
 });
 
 // --- EVENTOS TÁCTILES ---
-// Detectar si el dispositivo soporta touch para mostrar los controles
 if ('ontouchstart' in window || navigator.maxTouchPoints > 0) {
     document.getElementById('mobile-controls').style.display = 'flex';
 }
@@ -417,10 +402,9 @@ if ('ontouchstart' in window || navigator.maxTouchPoints > 0) {
 function bindTouchBtn(id, action) {
     const btn = document.getElementById(id);
     const handler = (e) => {
-        e.preventDefault(); // Evita zoom o scroll al tocar repetidamente
+        e.preventDefault(); 
         if(isStarted && !paused && !isGameOver) action();
     };
-    // Usamos touchstart para respuesta instantánea, click como fallback
     btn.addEventListener('touchstart', handler, {passive: false});
     btn.addEventListener('mousedown', handler);
 }
