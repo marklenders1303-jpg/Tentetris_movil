@@ -9,7 +9,8 @@
         body { 
             background: var(--bg); color: #fff; font-family: 'Courier New', monospace; 
             display: flex; flex-direction: column; align-items: center; justify-content: center; 
-            min-height: 100vh; margin: 0; overflow-y: hidden; padding: 10px 0; box-sizing: border-box;
+            min-height: 100vh; margin: 0; overflow: hidden; /* Evitamos el scroll a toda costa */
+            padding: 10px 0; box-sizing: border-box;
             user-select: none; -webkit-user-select: none;
         }
         .game-container { 
@@ -47,10 +48,10 @@
         .flash-active { animation: flash 0.3s ease-out; }
         @keyframes flash { 0% { background: transparent; } 50% { background: rgba(255,255,255,0.4); } 100% { background: transparent; } }
 
-        /* Estilos base controles móviles a dos manos */
+        /* Estilos base controles móviles (Invertidos) */
         .mobile-controls { display: none; width: 100%; justify-content: space-between; padding: 10px 15px; box-sizing: border-box; }
-        .ctrl-pad-left { display: flex; align-items: flex-end; gap: 8px; }
-        .ctrl-pad-right { display: flex; flex-direction: column; align-items: flex-end; justify-content: flex-end; gap: 15px; }
+        .ctrl-pad-dir { display: flex; align-items: flex-end; gap: 8px; }
+        .ctrl-pad-action { display: flex; flex-direction: column; align-items: flex-start; justify-content: flex-end; gap: 15px; }
         
         .ctrl-btn {
             background: var(--panel); border: 2px solid var(--accent); color: var(--accent); width: 55px; height: 55px; 
@@ -62,39 +63,40 @@
         .ctrl-drop { width: 65px; height: 65px; border-radius: 15px; font-size: 28px; } 
 
         /* =======================================================
-           RESPONSIVO MÓVIL: DISTRIBUCIÓN VERTICAL COMPLETA (Sin huecos negros)
+           RESPONSIVO MÓVIL: ULTRA COMPACTO (Sin Scroll)
            ======================================================= */
         @media (max-width: 600px) {
-            body { padding: 0; justify-content: flex-start; height: 100dvh; } /* 100dvh asegura el tamaño exacto en móviles */
+            body { padding: 0; justify-content: flex-start; height: 100dvh; } 
             
             .game-container { 
                 display: flex; flex-direction: column; align-items: center; justify-content: space-between; 
-                padding: 10px 5px; border: none; gap: 0; height: 100%; width: 100%; border-radius: 0;
+                padding: 5px; border: none; gap: 0; height: 100%; width: 100%; border-radius: 0;
             }
             
             .layout-left, .layout-right { display: contents; } 
             
-            /* 1. ESTADÍSTICAS ARRIBA */
-            #stats-row-1 { order: 1; display: flex !important; flex-direction: row !important; width: 100%; justify-content: space-around; gap: 5px; margin-bottom: 5px; flex: 0 0 auto; }
-            .stat-card { flex: 1; padding: 4px; margin: 0; border-bottom: 2px solid var(--accent); }
-            .stat-label { font-size: 10px; margin: 0; }
-            .stat-value { font-size: 16px; margin: 0; }
-            canvas#next-piece { max-width: 45px; height: auto; }
+            /* 1. ESTADÍSTICAS ARRIBA (Más compactas) */
+            #stats-row-1 { order: 1; display: flex !important; flex-direction: row !important; width: 100%; justify-content: space-around; gap: 5px; margin-bottom: 2px; flex: 0 0 auto; }
+            .stat-card { flex: 1; padding: 2px 4px; margin: 0; border-bottom: 2px solid var(--accent); }
+            .stat-label { font-size: 9px; margin: 0; }
+            .stat-value { font-size: 14px; margin: 0; }
+            canvas#next-piece { max-width: 35px; height: auto; }
             
-            /* 2. PANTALLA EN EL MEDIO (Flexible para aprovechar el espacio) */
-            .canvas-wrapper { order: 2; flex: 1 1 auto; display: flex; align-items: center; justify-content: center; width: 100%; margin: 10px 0; }
-            canvas#tetris { height: 100%; max-height: 50vh; width: auto; max-width: 100%; object-fit: contain; } 
+            /* 2. PANTALLA EN EL MEDIO (Usa el alto dinámico disponible) */
+            /* min-height: 0 es el truco para que el flexbox permita encoger el canvas sin desbordar */
+            .canvas-wrapper { order: 2; flex: 1 1 auto; display: flex; align-items: center; justify-content: center; width: 100%; margin: 5px 0; min-height: 0; }
+            canvas#tetris { height: 100%; width: auto; max-width: 100%; object-fit: contain; } 
             
-            /* 3. CONTROLES PULGARES JUSTO DEBAJO */
-            #mobile-controls { order: 3; display: flex; flex-direction: row; flex: 0 0 auto; width: 100%; padding: 0 10px; margin-bottom: 15px;}
-            .ctrl-btn { width: 55px; height: 55px; font-size: 22px; }
-            .ctrl-drop { width: 60px; height: 60px; font-size: 24px; } 
-            #btn-up { margin-right: 25px; } /* Desfase ergonómico mano derecha */
+            /* 3. CONTROLES PULGARES JUSTO DEBAJO (Acción Izda, Dirección Dcha) */
+            #mobile-controls { order: 3; display: flex; flex-direction: row; flex: 0 0 auto; width: 100%; padding: 0 8px; margin: 5px 0;}
+            .ctrl-btn { width: 48px; height: 48px; font-size: 20px; }
+            .ctrl-drop { width: 55px; height: 55px; font-size: 22px; } 
+            #btn-up { margin-left: 20px; } /* Desfase ergonómico adaptado para la mano izquierda */
             
             /* 4. BOTONES DEL SISTEMA AL FONDO */
             .rank-card { display: none !important; }
-            .buttons-group { order: 4; flex-direction: row; flex-wrap: wrap; width: 100%; justify-content: center; gap: 5px; margin-top: 0; margin-bottom: 5px; flex: 0 0 auto; }
-            .btn { flex: 1; min-width: 45%; font-size: 11px; padding: 8px 2px; }
+            .buttons-group { order: 4; flex-direction: row; flex-wrap: wrap; width: 100%; justify-content: center; gap: 4px; margin: 0 0 5px 0; flex: 0 0 auto; }
+            .btn { flex: 1; min-width: 45%; font-size: 10px; padding: 6px 2px; }
         }
     </style>
 </head>
@@ -125,15 +127,15 @@
         </div>
         
         <div id="mobile-controls" class="mobile-controls">
-            <div class="ctrl-pad-left">
+            <div class="ctrl-pad-action">
+                <div class="ctrl-btn" id="btn-up">↻</div>
+                <div class="ctrl-btn ctrl-drop" id="btn-drop">⏬</div>
+            </div>
+            
+            <div class="ctrl-pad-dir">
                 <div class="ctrl-btn" id="btn-left">←</div>
                 <div class="ctrl-btn" id="btn-down">↓</div>
                 <div class="ctrl-btn" id="btn-right">→</div>
-            </div>
-            
-            <div class="ctrl-pad-right">
-                <div class="ctrl-btn" id="btn-up">↻</div>
-                <div class="ctrl-btn ctrl-drop" id="btn-drop">⏬</div>
             </div>
         </div>
     </div>
